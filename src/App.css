@@ -143,7 +143,6 @@
   font-size: 4rem;
   margin-bottom: 1.5rem;
   background: linear-gradient(to right, var(--primary), var(--primary-dark));
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -187,7 +186,7 @@
   position: absolute;
   inset: 0;
   border-radius: var(--radius-lg);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .about-text h3 {
@@ -407,7 +406,7 @@ textarea.form-control {
   .about-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .contact-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
@@ -438,11 +437,11 @@ textarea.form-control {
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-buttons {
     flex-direction: column;
   }
-  
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;
