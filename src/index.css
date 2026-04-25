@@ -1,27 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --primary: #059669; /* Soft Emerald Green */
-  --primary-dark: #047857;
-  --secondary: #F59E0B; /* Warm Amber */
-  --secondary-dark: #D97706;
-  --bg-light: #F8FAFC;
-  --bg-white: #FFFFFF;
-  --text-main: #0F172A;
-  --text-muted: #475569;
-  --border-color: #E2E8F0;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-full: 9999px;
-  
-  --transition: all 0.3s ease-in-out;
-}
-
+/* Base styles */
 * {
   margin: 0;
   padding: 0;
@@ -34,8 +15,8 @@ html {
 
 body {
   font-family: 'Outfit', sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-main);
+  background-color: #F8FAFC;
+  color: #1E293B;
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -56,32 +37,20 @@ button {
   outline: none;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
 }
 
-/* Typography Utility */
-h1, h2, h3, h4 {
+/* Typography */
+h1,
+h2,
+h3,
+h4 {
   line-height: 1.2;
   font-weight: 600;
-  color: var(--text-main);
 }
 
-h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.section-subtitle {
-  text-align: center;
-  color: var(--text-muted);
-  max-width: 600px;
-  margin: 0 auto 3rem auto;
-  font-size: 1.1rem;
-}
-
-/* Global Layout */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -90,12 +59,4 @@ h2 {
 
 section {
   padding: 6rem 0;
-}
-
-.bg-white {
-  background-color: var(--bg-white);
-}
-
-.bg-light {
-  background-color: var(--bg-light);
 }

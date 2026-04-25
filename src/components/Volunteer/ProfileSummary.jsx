@@ -8,25 +8,30 @@ export default function ProfileSummary({
 }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-2xl mb-4 border-4 border-white shadow-sm">
-        {name.charAt(0)}
-      </div>
-      <h3 className="text-lg font-bold text-gray-900">{name}</h3>
-      <p className="text-sm text-gray-500 font-medium mb-6">{role}</p>
-      
-      <div className="w-full grid grid-cols-2 gap-4 border-t border-gray-100 pt-6">
-        <div className="text-center">
-          <p className="text-2xl font-black text-gray-900">{hours}</p>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Hours</p>
+      <div className="relative mb-6">
+        <div className="w-24 h-24 bg-teal-50 rounded-[2rem] flex items-center justify-center text-teal-700 font-black text-4xl border-4 border-white shadow-xl shadow-teal-700/10 ring-1 ring-teal-100/50">
+          {name.charAt(0)}
         </div>
-        <div className="text-center">
-          <p className="text-2xl font-black text-gray-900">{tasksCompleted}</p>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Tasks</p>
+        <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#16A34A] border-4 border-white rounded-full flex items-center justify-center">
+           <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
         </div>
       </div>
+      <h3 className="text-xl font-black text-slate-900 tracking-tight">{name}</h3>
+      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">{role}</p>
       
-      <button className="w-full mt-6 py-2 bg-gray-50 text-gray-700 text-sm font-bold rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
-        Edit Profile
+      <div className="w-full grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-slate-50">
+        <div className="text-center px-2">
+          <p className="text-3xl font-black text-slate-900 tracking-tighter">{hours}</p>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Hours</p>
+        </div>
+        <div className="text-center px-2">
+          <p className="text-3xl font-black text-slate-900 tracking-tighter">{tasksCompleted}</p>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Tasks</p>
+        </div>
+      </div>
+      
+      <button className="w-full mt-10 py-4 bg-slate-50 text-slate-700 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl border border-slate-100 hover:bg-slate-100 hover:text-slate-900 transition-all active:scale-95 shadow-sm">
+        Edit Account
       </button>
     </div>
   );

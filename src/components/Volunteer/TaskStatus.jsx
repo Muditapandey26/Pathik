@@ -4,15 +4,15 @@ export default function TaskStatus({ status = "open" }) {
   const getStatusStyles = () => {
     switch(status.toLowerCase()) {
       case 'open':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-green-50 text-[#16A34A] border-green-100';
       case 'in progress':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+        return 'bg-amber-50 text-[#F59E0B] border-amber-100';
       case 'completed':
-        return 'bg-gray-100 text-gray-600 border-gray-200';
+        return 'bg-slate-100 text-slate-600 border-slate-200';
       case 'urgent':
-        return 'bg-red-50 text-red-700 border-red-200 animate-pulse';
+        return 'bg-red-50 text-[#DC2626] border-red-100 animate-pulse';
       default:
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-teal-50 text-[#0F766E] border-teal-100';
     }
   };
 

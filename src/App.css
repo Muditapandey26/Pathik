@@ -1,3 +1,24 @@
+/* CSS Variables */
+:root {
+  --primary: #0F766E;
+  --primary-dark: #0D5F57;
+  --secondary: #F59E0B;
+  --secondary-dark: #D97706;
+  --accent: #0EA5E9;
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  --bg-white: #FFFFFF;
+  --bg-light: #F8FAFC;
+  --border-color: #E2E8F0;
+  --radius-full: 9999px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
 /* Navbar */
 .navbar {
   position: fixed;
