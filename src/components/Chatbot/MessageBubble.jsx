@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * MessageBubble Component
+ * Renders individual chat messages with alignment based on sender.
+ */
 export default function MessageBubble({ message, isUser }) {
   return (
     <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>

@@ -1,10 +1,16 @@
 import React from 'react';
 
+/**
+ * ChatInput Component
+ * A fully controlled input component for the chatbot.
+ */
 export default function ChatInput({ value, onChange, onSubmit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (value.trim()) {
-      onSubmit();
+    const trimmedValue = value.trim();
+    if (trimmedValue) {
+      // Pass the message to the parent submit handler
+      onSubmit(trimmedValue);
     }
   };
 

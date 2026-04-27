@@ -2,10 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ChatWindow from '../components/Chatbot/ChatWindow';
+import Footer from '../components/Footer';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col text-slate-800 selection:bg-teal-100 selection:text-teal-900">
+    <div id="top" className="min-h-screen bg-slate-50 font-sans flex flex-col text-slate-800 selection:bg-teal-100 selection:text-teal-900">
       <Navbar />
 
       {/* Main Container - Padded for navbar */}
@@ -92,6 +93,7 @@ export default function Home() {
         </aside>
 
       </main>
+      <Footer />
     </div>
   );
 }

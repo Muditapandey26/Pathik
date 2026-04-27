@@ -1,52 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
 import { sendMessage } from '../../services/chatbotService';
 
+/**
+ * ChatWindow Component
+ * Manages the state and lifecycle of the chatbot conversation.
+ */
 export default function ChatWindow() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Dummy state for UI demonstration (No actual API logic)
   const [messages, setMessages] = useState([
     {
-      id: 1,
+      id: 'initial-greeting',
       text: "Namaskar! I’m Saathi. Are you here to volunteer or report a community need?",
       isUser: false,
     }
   ]);
 
-  const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return;
+  const messagesEndRef = useRef(null);
+  const isInitialMount = useRef(true);
 
-    const userText = inputValue.trim();
-    const newUserMessage = { id: Date.now(), text: userText, isUser: true };
-    
-    // Add user message to UI immediately
+  // Auto-scroll to bottom when messages change
+  const scrollToBottom = (behavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior, block: "nearest" });
+  };
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      // Skip smooth scroll on first load to prevent hero "sliding"
+      isInitialMount.current = false;
+      // Optional: scroll instantly on mount without animation if needed
+      // scrollToBottom("auto"); 
+      return;
+    }
+    scrollToBottom("smooth");
+  }, [messages, isLoading]);
+
+  /**
+   * Handles sending a message.
+   * @param {string} text - Optional text passed from ChatInput
+   */
+  const handleSend = async (text) => {
+    const messageText = text || inputValue.trim();
+    if (!messageText || isLoading) return;
+
+    // Create user message object
+    const newUserMessage = {
+      id: crypto.randomUUID(),
+      text: messageText,
+      isUser: true
+    };
+
+    // Update UI immediately
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsLoading(true);
 
     try {
-      // Format existing messages as history for Gemini (excluding the new message)
-      // Gemini expects: { role: 'user' | 'model', parts: [{ text: string }] }
-      const history = messages.map(msg => ({
-        role: msg.isUser ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }));
+      // Build history for Gemini
+      // IMPORTANT: Gemini history must alternate and usually starts with 'user'.
+      // We filter out the initial model greeting to ensure history starts with 'user'
+      // or at least maintains valid alternation.
+      const updatedMessages = [...messages, newUserMessage];
 
-      // Get response from Gemini
-      const responseText = await sendMessage(userText, history);
-      
+      const history = updatedMessages
+        .filter(msg => msg.id !== 'initial-greeting')
+        .map(msg => ({
+          role: msg.isUser ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
+
+      // Get response from AI service
+      const responseText = await sendMessage(messageText, history);
+      console.log("AI RESPONSE:", responseText);
+      // Add bot response to messages
       setMessages(prev => [...prev, {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         text: responseText,
         isUser: false
       }]);
     } catch (error) {
       console.error("Chat Error:", error);
       setMessages(prev => [...prev, {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         text: "I encountered a slight technical glitch. Could you please try sending that again?",
         isUser: false
       }]);
@@ -58,7 +95,7 @@ export default function ChatWindow() {
   return (
     <div className="flex flex-col h-full w-full bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden relative">
 
-      {/* Glassy Header */}
+      {/* Header */}
       <div className="px-8 py-5 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-20 flex items-center gap-4">
         <div className="relative">
           <div className="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shadow-lg shadow-teal-700/30">
@@ -81,7 +118,7 @@ export default function ChatWindow() {
         </div>
       </div>
 
-      {/* Messages Area */}
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50/50 flex flex-col gap-2">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg.text} isUser={msg.isUser} />
@@ -95,9 +132,10 @@ export default function ChatWindow() {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <ChatInput
         value={inputValue}
         onChange={setInputValue}
