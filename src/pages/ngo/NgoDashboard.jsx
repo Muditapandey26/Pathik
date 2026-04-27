@@ -1,8 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import KanbanPipeline from '../../components/NGO/KanbanPipeline';
+import { useAuth } from '../../context/AuthContext';
+import { getAllNeeds } from '../../services/needService';
+import { getNgoTasks } from '../../services/taskService';
 
 export default function NgoDashboard() {
+  const { user } = useAuth();
+  const [metrics, setMetrics] = useState({
+    openNeeds: 0,
+    activeTasks: 0,
+    volunteers: 148, // Placeholder for now
+    resolvedCases: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        setLoading(true);
+        const [needs, tasks] = await Promise.all([
+          getAllNeeds(),
+          getNgoTasks(user?.uid)
+        ]);
+
+        const openNeedsCount = needs.filter(n => n.status === 'pending').length;
+        const activeTasksCount = tasks.filter(t => t.status === 'open' || t.status === 'assigned').length;
+        const resolvedCount = needs.filter(n => n.status === 'resolved').length;
+
+        setMetrics(prev => ({
+          ...prev,
+          openNeeds: openNeedsCount,
+          activeTasks: activeTasksCount,
+          resolvedCases: resolvedCount
+        }));
+      } catch (err) {
+        console.error("Failed to fetch NGO metrics:", err);
+        setError("Error loading dashboard data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchMetrics();
+    }
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col text-slate-800">
       <Navbar />
@@ -73,14 +118,19 @@ export default function NgoDashboard() {
           </div>
 
           {/* Top Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-            
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 relative">
+            {loading && (
+              <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-2xl">
+                <div className="w-8 h-8 border-4 border-teal-700/20 border-t-teal-700 rounded-full animate-spin"></div>
+              </div>
+            )}
+
             {/* Open Needs */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Open Needs</h3>
               <div className="flex items-end justify-between mt-2">
-                <span className="text-4xl font-black text-slate-900">24</span>
-                <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded-md">+3 today</span>
+                <span className="text-4xl font-black text-slate-900">{metrics.openNeeds}</span>
+                <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded-md">Live</span>
               </div>
             </div>
 
@@ -88,7 +138,7 @@ export default function NgoDashboard() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Active Tasks</h3>
               <div className="flex items-end justify-between mt-2">
-                <span className="text-4xl font-black text-slate-900">12</span>
+                <span className="text-4xl font-black text-slate-900">{metrics.activeTasks}</span>
                 <span className="text-sm font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded-md">On track</span>
               </div>
             </div>
@@ -97,8 +147,8 @@ export default function NgoDashboard() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Volunteers</h3>
               <div className="flex items-end justify-between mt-2">
-                <span className="text-4xl font-black text-slate-900">148</span>
-                <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">+12 this wk</span>
+                <span className="text-4xl font-black text-slate-900">{metrics.volunteers}</span>
+                <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">Network</span>
               </div>
             </div>
 
@@ -106,7 +156,7 @@ export default function NgoDashboard() {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Resolved Cases</h3>
               <div className="flex items-end justify-between mt-2">
-                <span className="text-4xl font-black text-slate-900">856</span>
+                <span className="text-4xl font-black text-slate-900">{metrics.resolvedCases}</span>
                 <span className="text-sm font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">Total</span>
               </div>
             </div>

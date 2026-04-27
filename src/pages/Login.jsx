@@ -1,8 +1,45 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { auth } from '../services/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {
+  const { setUserRole } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('volunteer');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Save role for routing (Persistence bridge until Firestore)
+      localStorage.setItem(`role_${user.uid}`, role);
+      setUserRole(role);
+
+      // Redirect based on selected role
+      if (role === 'ngo') {
+        navigate('/ngo/dashboard');
+      } else {
+        navigate('/volunteer/dashboard');
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col text-slate-800">
       <Navbar />
@@ -22,7 +59,14 @@ export default function Login() {
             </p>
           </div>
 
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
+          <form onSubmit={handleLogin} className="space-y-8">
+            
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl animate-in fade-in zoom-in duration-200">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-3">
               <label
                 htmlFor="email"
@@ -33,8 +77,29 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                 placeholder="you@example.com"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label
+                htmlFor="password"
+                className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
+                placeholder="••••••••"
               />
             </div>
 
@@ -49,8 +114,9 @@ export default function Login() {
               <div className="relative">
                 <select
                   id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 appearance-none font-bold cursor-pointer"
-                  defaultValue="volunteer"
                 >
                   <option value="volunteer">Volunteer</option>
                   <option value="ngo">NGO Partner</option>
@@ -74,18 +140,14 @@ export default function Login() {
               </div>
             </div>
 
-
             <div className="pt-4">
-              <Link
-                to={
-                  document.getElementById('role')?.value === 'ngo'
-                    ? '/ngo/dashboard'
-                    : '/volunteer/dashboard'
-                }
-                className="w-full flex justify-center py-5 px-6 border border-transparent rounded-2xl shadow-xl shadow-teal-700/25 text-lg font-black text-white bg-teal-700 hover:bg-teal-800 hover:-translate-y-1 transition-all duration-300 active:scale-95 uppercase tracking-widest"
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-5 px-6 border border-transparent rounded-2xl shadow-xl shadow-teal-700/25 text-lg font-black text-white bg-teal-700 hover:bg-teal-800 hover:-translate-y-1 transition-all duration-300 active:scale-95 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
-                Sign In
-              </Link>
+                {loading ? 'Signing In...' : 'Sign In'}
+              </button>
             </div>
           </form>
 

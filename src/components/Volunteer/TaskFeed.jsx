@@ -1,6 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import TaskCard from './TaskCard';
 import { rankTasks } from '../../utils/matching';
+import { getOpenTasks } from '../../services/taskService';
+import { useAuth } from '../../context/AuthContext';
+import { getUserProfile } from '../../services/userService';
 
 export default function TaskFeed() {
   const [filterUrgency, setFilterUrgency] = useState('');
@@ -8,78 +11,40 @@ export default function TaskFeed() {
   const [filterSkill, setFilterSkill] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Mock volunteer profile data
-  const mockVolunteer = {
-    skills: ["Logistics", "Education"],
-    city: "Mumbai",
-    pincode: "400001"
-  };
+  const { user } = useAuth();
+  const [tasks, setTasks] = useState([]);
+  const [volunteerProfile, setVolunteerProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Dummy data array updated with matching fields
-  const dummyTasks = [
-    {
-      id: 1,
-      title: "Distribute Food Packets",
-      ngoName: "Food for All",
-      location: "Downtown Plaza",
-      city: "Mumbai",
-      pincode: "400001",
-      date: "Tomorrow, 9 AM",
-      status: "urgent",
-      urgency: "high",
-      requiredSkills: ["Logistics", "Coordination"],
-      skill: "Logistics", // Kept for filter compatibility
-      description: "We need 5 volunteers to help distribute 500 food packets to the homeless community downtown. Gloves and sanitizers provided."
-    },
-    {
-      id: 2,
-      title: "Weekend Beach Cleanup",
-      ngoName: "Ocean Savers",
-      location: "Sunny Beach",
-      city: "Mumbai",
-      pincode: "400005",
-      date: "Saturday, 8 AM",
-      status: "open",
-      urgency: "medium",
-      requiredSkills: ["Physical", "Environment"],
-      skill: "Physical",
-      description: "Join us for our monthly beach cleanup. Trash bags and gloves will be provided. Let's keep our oceans clean!"
-    },
-    {
-      id: 3,
-      title: "Teach Basic Math",
-      ngoName: "EduCare Foundation",
-      location: "City Library",
-      city: "Pune",
-      pincode: "411001",
-      date: "Next Monday",
-      status: "in progress",
-      urgency: "low",
-      requiredSkills: ["Education", "Teaching"],
-      skill: "Education",
-      description: "Looking for someone to teach basic mathematics to underprivileged children for 2 hours in the evening."
-    },
-    {
-      id: 4,
-      title: "Tree Plantation Drive",
-      ngoName: "Green Earth",
-      location: "Central Park",
-      city: "Mumbai",
-      pincode: "400012",
-      date: "Oct 30, 2026",
-      status: "completed",
-      urgency: "low",
-      requiredSkills: ["Physical"],
-      skill: "Physical",
-      description: "Successfully planted 200 saplings in the central park area. Thank you to all who participated."
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [fetchedTasks, profile] = await Promise.all([
+          getOpenTasks(),
+          getUserProfile(user?.uid)
+        ]);
+        setTasks(fetchedTasks);
+        setVolunteerProfile(profile);
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+        setError("Could not load tasks. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchData();
     }
-  ];
+  }, [user]);
 
   // Integrate ranking utility
-  // We use useMemo to avoid re-ranking on every render unless tasks/volunteer changes
   const rankedTasks = useMemo(() => {
-    return rankTasks(mockVolunteer, dummyTasks);
-  }, []);
+    if (!volunteerProfile || tasks.length === 0) return tasks;
+    return rankTasks(volunteerProfile, tasks);
+  }, [volunteerProfile, tasks]);
 
   // Filtering logic applied to the ranked results
   const filteredTasks = rankedTasks.filter(task => {
@@ -178,9 +143,24 @@ export default function TaskFeed() {
         </div>
       )}
 
+      {/* Loading & Error States */}
+      {loading && (
+        <div className="flex-grow flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 border-4 border-teal-700/20 border-t-teal-700 rounded-full animate-spin mb-4"></div>
+          <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">Fetching tasks...</p>
+        </div>
+      )}
+
+      {error && !loading && (
+        <div className="p-8 bg-red-50 border border-red-100 rounded-3xl text-center">
+          <p className="text-red-600 font-bold mb-2">{error}</p>
+          <button onClick={() => window.location.reload()} className="text-teal-700 font-black text-xs uppercase tracking-widest hover:underline">Retry</button>
+        </div>
+      )}
+
       {/* Feed */}
       <div className="flex flex-col gap-6">
-        {filteredTasks.length > 0 ? (
+        {!loading && !error && filteredTasks.length > 0 ? (
           filteredTasks.map((task, index) => (
             <div key={task.id} className="animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${index * 100}ms` }}>
               <TaskCard 
@@ -195,7 +175,7 @@ export default function TaskFeed() {
               />
             </div>
           ))
-        ) : (
+        ) : !loading && !error && (
           <div className="py-20 text-center flex flex-col items-center border-2 border-dashed border-slate-200 rounded-[2.5rem] bg-slate-50/50">
             <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-slate-300 mb-6">
                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const LeafIcon = ({ size = 28 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
-    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+const PathikLogo = ({ size = 28 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 21C4 18.2386 7.58172 16 12 16C16.4183 16 20 18.2386 20 21" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 16V12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50" />
+    <path d="M8 21H16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -32,11 +34,11 @@ export default function Navbar() {
         <div className="flex justify-between h-20 items-center">
           <Link to="/" className="flex items-center gap-2.5 group transition-transform hover:scale-[1.02]">
             <div className="w-10 h-10 bg-teal-700 text-white rounded-xl flex items-center justify-center shadow-lg shadow-teal-700/20 group-hover:rotate-3 transition-transform">
-              <LeafIcon size={24} />
+              <PathikLogo size={24} />
             </div>
             <span className="text-slate-900 font-black text-2xl tracking-tight">Pathik</span>
           </Link>
-          
+
           <div className="hidden md:flex space-x-10 items-center">
             <Link to="/" className="text-slate-500 hover:text-teal-700 font-bold text-sm uppercase tracking-wider transition-colors">Home</Link>
             <Link to="/report-need" className="text-slate-500 hover:text-teal-700 font-bold text-sm uppercase tracking-wider transition-colors">Report Need</Link>

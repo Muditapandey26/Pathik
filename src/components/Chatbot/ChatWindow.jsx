@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
+import { sendMessage } from '../../services/chatbotService';
 
 export default function ChatWindow() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Dummy state for UI demonstration (No actual API logic)
   const [messages, setMessages] = useState([
     {
@@ -15,34 +16,59 @@ export default function ChatWindow() {
     }
   ]);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async () => {
+    if (!inputValue.trim() || isLoading) return;
+
+    const userText = inputValue.trim();
+    const newUserMessage = { id: Date.now(), text: userText, isUser: true };
     
-    // Add dummy user message to state
-    setMessages(prev => [...prev, { id: Date.now(), text: inputValue, isUser: true }]);
+    // Add user message to UI immediately
+    setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
     setIsLoading(true);
-    
-    // Simulate backend response after 1.5 seconds
-    setTimeout(() => {
-      setIsLoading(false);
-      setMessages(prev => [...prev, { 
-        id: Date.now(), 
-        text: "I am a placeholder UI for now! Backend integration coming soon.", 
-        isUser: false 
+
+    try {
+      // Format existing messages as history for Gemini (excluding the new message)
+      // Gemini expects: { role: 'user' | 'model', parts: [{ text: string }] }
+      const history = messages.map(msg => ({
+        role: msg.isUser ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }));
+
+      // Get response from Gemini
+      const responseText = await sendMessage(userText, history);
+      
+      setMessages(prev => [...prev, {
+        id: Date.now(),
+        text: responseText,
+        isUser: false
       }]);
-    }, 1500);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setMessages(prev => [...prev, {
+        id: Date.now(),
+        text: "I encountered a slight technical glitch. Could you please try sending that again?",
+        isUser: false
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col h-full w-full bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden relative">
-      
+
       {/* Glassy Header */}
       <div className="px-8 py-5 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-20 flex items-center gap-4">
         <div className="relative">
           <div className="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shadow-lg shadow-teal-700/30">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 8V4H8"></path>
+              <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+              <path d="M2 14h2"></path>
+              <path d="M20 14h2"></path>
+              <path d="M15 13v2"></path>
+              <path d="M9 13v2"></path>
             </svg>
           </div>
           <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#16A34A] border-4 border-white rounded-full"></span>
@@ -72,10 +98,10 @@ export default function ChatWindow() {
       </div>
 
       {/* Input Area */}
-      <ChatInput 
-        value={inputValue} 
-        onChange={setInputValue} 
-        onSubmit={handleSend} 
+      <ChatInput
+        value={inputValue}
+        onChange={setInputValue}
+        onSubmit={handleSend}
       />
     </div>
   );

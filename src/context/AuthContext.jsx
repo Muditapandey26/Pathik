@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../services/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { getUserProfile } from '../services/userService';
 
 const AuthContext = createContext(null);
 
@@ -11,33 +14,50 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Mock state: null means not logged in
-  const [user, setUser] = useState(null); 
-  const [role, setRole] = useState(null); // e.g., 'volunteer', 'ngo'
+  const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState(null); // 'volunteer' or 'ngo'
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder login function ready for future Firebase/Backend integration
-  const login = (userData) => {
-    setUser({ id: 'mock-id-123', name: 'Mock User', ...userData });
-    setRole(userData.role || 'volunteer');
-  };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
 
-  // Placeholder logout function
-  const logout = () => {
-    setUser(null);
-    setRole(null);
+      if (firebaseUser) {
+        // Fetch real-time profile from Firestore
+        const profile = await getUserProfile(firebaseUser.uid);
+        if (profile) {
+          setUserRole(profile.role);
+        } else {
+          // Fallback if profile doesn't exist yet (e.g. just signed up)
+          // The Signup page will manually set the role in the context
+          setUserRole(null);
+        }
+      } else {
+        setUserRole(null);
+      }
+
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const logout = async () => {
+    await signOut(auth);
+    setUserRole(null);
   };
 
   const value = {
     user,
-    role,
-    login,
+    userRole,
+    setUserRole, // Exposed to set role during signup/login
     logout,
     isAuthenticated: !!user,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

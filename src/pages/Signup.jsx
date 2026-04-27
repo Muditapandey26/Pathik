@@ -1,9 +1,67 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { auth } from '../services/firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserProfile } from '../services/userService';
 
 export default function Signup() {
+  const { setUserRole } = useAuth();
   const [role, setRole] = useState('volunteer');
+  const [name, setName] = useState('');
+  const [orgName, setOrgName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match");
+    }
+
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Update profile with name and optionally role (stored in displayName for now as Firestore is skipped)
+      const profileName = role === 'ngo' ? `${orgName} (${name})` : name;
+      await updateProfile(user, { displayName: profileName });
+      
+      // Save profile to Firestore
+      const profileData = {
+        name,
+        email,
+        role,
+        ...(role === 'ngo' && { orgName })
+      };
+      await createUserProfile(user.uid, profileData);
+      
+      // Save role for routing (Persistence bridge until Firestore fetching is in context)
+      localStorage.setItem(`role_${user.uid}`, role);
+      setUserRole(role);
+      
+      console.log("Registered and profile saved for role:", role);
+      
+      // Redirect based on role
+      if (role === 'ngo') {
+        navigate('/ngo/dashboard');
+      } else {
+        navigate('/volunteer/dashboard');
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col text-slate-800">
@@ -20,8 +78,14 @@ export default function Signup() {
             <p className="text-slate-500 font-medium">Empower your community with grassroots action.</p>
           </div>
 
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
+          <form onSubmit={handleSignup} className="space-y-8">
             
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl animate-in fade-in zoom-in duration-200">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-3">
               <label htmlFor="role" className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
                 I am a...
@@ -50,6 +114,9 @@ export default function Signup() {
                 <input 
                   type="text" 
                   id="orgName" 
+                  value={orgName}
+                  onChange={(e) => setOrgName(e.target.value)}
+                  required={role === 'ngo'}
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                   placeholder="E.g., Global Relief" 
                 />
@@ -63,6 +130,9 @@ export default function Signup() {
               <input 
                 type="text" 
                 id="name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
                 className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                 placeholder={role === 'ngo' ? "Your name" : "Your full name"} 
               />
@@ -75,6 +145,9 @@ export default function Signup() {
               <input 
                 type="email" 
                 id="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                 placeholder="you@example.com" 
               />
@@ -88,6 +161,9 @@ export default function Signup() {
                 <input 
                   type="password" 
                   id="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                   placeholder="••••••••" 
                 />
@@ -99,6 +175,9 @@ export default function Signup() {
                 <input 
                   type="password" 
                   id="confirmPassword" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                   placeholder="••••••••" 
                 />
@@ -108,9 +187,10 @@ export default function Signup() {
             <div className="pt-6">
               <button 
                 type="submit" 
-                className="w-full flex justify-center py-5 px-6 border border-transparent rounded-2xl shadow-xl shadow-teal-700/25 text-lg font-black text-white bg-teal-700 hover:bg-teal-800 hover:-translate-y-1 transition-all duration-300 active:scale-95 uppercase tracking-widest"
+                disabled={loading}
+                className="w-full flex justify-center py-5 px-6 border border-transparent rounded-2xl shadow-xl shadow-teal-700/25 text-lg font-black text-white bg-teal-700 hover:bg-teal-800 hover:-translate-y-1 transition-all duration-300 active:scale-95 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
-                Create Account
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </div>
           </form>

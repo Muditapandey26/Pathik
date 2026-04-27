@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function NGORoute({ children }) {
-  const { user, role } = useAuth();
+  const { user, userRole } = useAuth();
 
   // If no user is logged in, redirect to login page
   if (!user) {
@@ -11,7 +11,7 @@ export default function NGORoute({ children }) {
   }
 
   // If the user is logged in but not an ngo, redirect to home
-  if (role !== 'ngo') {
+  if (userRole !== 'ngo') {
     return <Navigate to="/" replace />;
   }
 
