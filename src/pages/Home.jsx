@@ -9,43 +9,43 @@ export default function Home() {
       <Navbar />
 
       {/* Main Container - Padded for navbar */}
-      <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row max-w-7xl mx-auto w-full gap-12 items-center">
+      <main className="flex-grow pt-20 pb-8 px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row max-w-7xl mx-auto w-full gap-8 items-center lg:items-center min-h-[calc(100vh-80px)]">
 
         {/* Left Content Area (Hero & CTAs) */}
-        <section className="flex-1 flex flex-col justify-center">
-          <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-10 md:p-16 border border-slate-100 h-full flex flex-col justify-center relative overflow-hidden">
+        <section className="flex-1 flex flex-col justify-center w-full">
+          <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 px-8 py-8 md:px-12 md:py-10 lg:px-14 border border-slate-100 relative overflow-hidden">
 
             {/* Subtle background decoration */}
             <div className="absolute top-0 right-0 -mr-24 -mt-24 w-96 h-96 rounded-full bg-teal-50 blur-[100px] opacity-80 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-72 h-72 rounded-full bg-sky-50 blur-[80px] opacity-60 pointer-events-none"></div>
 
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-teal-50/80 border border-teal-100/50 text-teal-800 text-[11px] font-black uppercase tracking-[0.2em] mb-10 w-max shadow-sm">
+              <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-teal-50/80 border border-teal-100/50 text-teal-800 text-[11px] font-black uppercase tracking-[0.2em] mb-5 w-max shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-teal-600 animate-ping"></span>
                 Empowering Communities
               </div>
 
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black text-slate-900 leading-[0.95] tracking-[-0.04em] mb-8">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[5rem] font-black text-slate-900 leading-[0.95] tracking-[-0.04em] mb-5">
                 Amplify Your <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-br from-teal-700 via-teal-600 to-sky-500">
                   Social Impact
                 </span>
               </h1>
 
-              <p className="text-xl sm:text-2xl font-bold text-slate-600 mb-6 leading-snug tracking-tight">
+              <p className="text-lg sm:text-xl xl:text-2xl font-bold text-slate-600 mb-4 leading-snug tracking-tight">
                 The modern coordination engine for <span className="text-slate-900">grassroots change.</span>
               </p>
 
-              <p className="text-lg text-slate-500 mb-14 leading-relaxed max-w-xl font-medium">
+              <p className="text-base sm:text-lg text-slate-500 mb-8 leading-relaxed max-w-xl font-medium">
                 Pathik bridges the gap between communities in need, dedicated volunteers, and verified NGOs. Report crises, coordinate relief, and scale impact through our unified, real-time platform.
               </p>
 
-              <div className="flex flex-col sm:flex-row flex-wrap gap-5 items-stretch sm:items-center">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center">
                 <Link
                   to="/signup"
-                  className="inline-flex justify-center items-center gap-3 px-10 py-5 bg-teal-700 text-white text-lg font-black rounded-2xl shadow-xl shadow-teal-700/30 hover:bg-teal-800 hover:shadow-teal-700/40 hover:-translate-y-1 transition-all duration-300 active:scale-95"
+                  className="inline-flex justify-center items-center gap-3 px-8 py-3.5 bg-teal-700 text-white text-lg font-black rounded-2xl shadow-xl shadow-teal-700/30 hover:bg-teal-800 hover:shadow-teal-700/40 hover:-translate-y-1 transition-all duration-300 active:scale-95"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <line x1="19" y1="8" x2="19" y2="14"></line>
@@ -55,9 +55,9 @@ export default function Home() {
                 </Link>
                 <Link
                   to="/report-need"
-                  className="inline-flex justify-center items-center gap-3 px-10 py-5 bg-white text-slate-800 border-2 border-slate-100 text-lg font-black rounded-2xl shadow-sm hover:border-teal-100 hover:bg-teal-50/30 hover:-translate-y-1 transition-all duration-300 active:scale-95"
+                  className="inline-flex justify-center items-center gap-3 px-8 py-3.5 bg-white text-slate-800 border-2 border-slate-100 text-lg font-black rounded-2xl shadow-sm hover:border-teal-100 hover:bg-teal-50/30 hover:-translate-y-1 transition-all duration-300 active:scale-95"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
                     <line x1="12" y1="9" x2="12" y2="13"></line>
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -66,7 +66,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="mt-12 flex items-center gap-4 text-sm font-bold text-slate-400">
+              <div className="mt-8 flex items-center gap-4 text-sm font-bold text-slate-400">
                 <span className="uppercase tracking-widest text-[10px]">Trusted by organizations</span>
                 <div className="flex -space-x-3">
                   {[1, 2, 3].map(i => (
@@ -86,7 +86,7 @@ export default function Home() {
 
         {/* Right Chatbot Panel */}
         <aside className="w-full lg:w-96 flex-shrink-0">
-          <div className="h-[600px] lg:h-full">
+          <div className="h-[520px] lg:h-[580px]">
             <ChatWindow />
           </div>
         </aside>

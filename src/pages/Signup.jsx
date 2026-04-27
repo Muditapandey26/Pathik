@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import { auth } from '../services/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { createUserProfile } from '../services/userService';
+import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
   const { setUserRole } = useAuth();
