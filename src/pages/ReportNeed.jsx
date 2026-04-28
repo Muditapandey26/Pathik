@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 
 export default function ReportNeed() {
+  React.useEffect(() => {
+    document.title = "Pathik | Report Community Need";
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col text-slate-800">
       <Navbar />

@@ -37,6 +37,16 @@ export default function ChatWindow() {
     scrollToBottom("smooth");
   }, [messages, isLoading]);
 
+  const clearChat = () => {
+    setMessages([
+      {
+        id: 'initial-greeting',
+        text: "Namaskar! I’m Saathi. Are you here to volunteer or report a community need?",
+        isUser: false,
+      }
+    ]);
+  };
+
   /**
    * Handles sending a message.
    * @param {string} text - Optional text passed from ChatInput
@@ -96,26 +106,39 @@ export default function ChatWindow() {
     <div className="flex flex-col h-full w-full bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden relative">
 
       {/* Header */}
-      <div className="px-8 py-5 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-20 flex items-center gap-4">
-        <div className="relative">
-          <div className="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shadow-lg shadow-teal-700/30">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 8V4H8"></path>
-              <rect width="16" height="12" x="4" y="8" rx="2"></rect>
-              <path d="M2 14h2"></path>
-              <path d="M20 14h2"></path>
-              <path d="M15 13v2"></path>
-              <path d="M9 13v2"></path>
-            </svg>
+      <div className="px-8 py-5 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="w-14 h-14 rounded-2xl bg-teal-700 text-white flex items-center justify-center shadow-lg shadow-teal-700/30">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 8V4H8"></path>
+                <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                <path d="M2 14h2"></path>
+                <path d="M20 14h2"></path>
+                <path d="M15 13v2"></path>
+                <path d="M9 13v2"></path>
+              </svg>
+            </div>
+            <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#16A34A] border-4 border-white rounded-full"></span>
           </div>
-          <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#16A34A] border-4 border-white rounded-full"></span>
+          <div>
+            <h3 className="font-black text-slate-900 text-xl tracking-tight">Saathi</h3>
+            <p className="text-[10px] text-[#16A34A] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+              Online Assistant
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-black text-slate-900 text-xl tracking-tight">Saathi</h3>
-          <p className="text-[10px] text-[#16A34A] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-            Online Assistant
-          </p>
-        </div>
+        
+        <button 
+          onClick={clearChat}
+          className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all active:scale-90"
+          title="Clear Chat"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
       </div>
 
       {/* Messages */}

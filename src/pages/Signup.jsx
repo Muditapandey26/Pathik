@@ -7,6 +7,10 @@ import { createUserProfile } from '../services/userService';
 import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
+  React.useEffect(() => {
+    document.title = "Pathik | Signup";
+  }, []);
+
   const { setUserRole } = useAuth();
   const [role, setRole] = useState('volunteer');
   const [name, setName] = useState('');
@@ -165,6 +169,7 @@ export default function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={8}
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                   placeholder="••••••••" 
                 />
@@ -179,6 +184,7 @@ export default function Signup() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  minLength={8}
                   className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-700 transition-all text-slate-800 placeholder-slate-400 font-medium"
                   placeholder="••••••••" 
                 />

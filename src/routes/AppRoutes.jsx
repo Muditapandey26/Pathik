@@ -6,6 +6,7 @@ import VolunteerDashboard from '../pages/volunteer/VolunteerDashboard';
 import NgoDashboard from '../pages/ngo/NgoDashboard';
 import CreateTask from '../pages/ngo/CreateTask';
 import ReportNeed from '../pages/ReportNeed';
+import NotFound from '../pages/NotFound';
 import VolunteerRoute from './VolunteerRoute';
 import NGORoute from './NGORoute';
 
@@ -40,6 +41,7 @@ export default function AppRoutes() {
         } 
       />
       <Route path="/report-need" element={<ReportNeed />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

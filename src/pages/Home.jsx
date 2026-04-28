@@ -5,6 +5,10 @@ import ChatWindow from '../components/Chatbot/ChatWindow';
 import Footer from '../components/Footer';
 
 export default function Home() {
+  React.useEffect(() => {
+    document.title = "Pathik | Empowering Communities";
+  }, []);
+
   return (
     <div id="top" className="min-h-screen bg-slate-50 font-sans flex flex-col text-slate-800 selection:bg-teal-100 selection:text-teal-900">
       <Navbar />

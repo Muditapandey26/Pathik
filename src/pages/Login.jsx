@@ -6,6 +6,10 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
+  React.useEffect(() => {
+    document.title = "Pathik | Login";
+  }, []);
+
   const { setUserRole } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
