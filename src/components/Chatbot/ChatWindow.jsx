@@ -57,7 +57,9 @@ export default function ChatWindow() {
 
     // Create user message object
     const newUserMessage = {
-      id: crypto.randomUUID(),
+      id: typeof crypto.randomUUID === 'function' 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2, 15),
       text: messageText,
       isUser: true
     };
@@ -86,7 +88,9 @@ export default function ChatWindow() {
       console.log("AI RESPONSE:", responseText);
       // Add bot response to messages
       setMessages(prev => [...prev, {
-        id: crypto.randomUUID(),
+        id: typeof crypto.randomUUID === 'function' 
+          ? crypto.randomUUID() 
+          : Math.random().toString(36).substring(2, 15),
         text: responseText,
         isUser: false
       }]);

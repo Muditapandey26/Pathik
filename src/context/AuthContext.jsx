@@ -19,6 +19,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
 
@@ -28,8 +33,6 @@ export const AuthProvider = ({ children }) => {
         if (profile) {
           setUserRole(profile.role);
         } else {
-          // Fallback if profile doesn't exist yet (e.g. just signed up)
-          // The Signup page will manually set the role in the context
           setUserRole(null);
         }
       } else {
